@@ -29,3 +29,28 @@ remove_filter('comment_text','wptexturize');
 
 //allow HTML in user profiles
 remove_filter('pre_user_description','wp_filter_kses');
+
+/**
+ * The main diff between filters and actions is
+ * actions dont return anything and dont take arguments
+ * whereas filters do
+ */
+
+
+// adding SEO functionality to plugin
+//adds keywords from tags of posts
+function tag_to_keywords(){
+    global $post;
+    if(is_single() || is_page()){
+        $tags = wp_get_post_tags($post->ID);
+        foreach($tags as $tag){
+            $tag_array[]=$tag->name;
+        }
+        $tag_string = implode(', ',$tag_array);
+        if($tag_string !== ''){
+            echo "<meta name='keywords' content='".$tag_array."'>\r\n";
+        }
+    }
+}
+
+add_action('wp_head','tag_to_keywords');
