@@ -48,9 +48,24 @@ function tag_to_keywords(){
         }
         $tag_string = implode(', ',$tag_array);
         if($tag_string !== ''){
-            echo "<meta name='keywords' content='".$tag_array."'>\r\n";
+            echo "<meta name='keywords' content='".$tag_array."'/>\r\n";
         }
     }
 }
 
 add_action('wp_head','tag_to_keywords');
+
+//now adding Ddescription to header for same SEO purpose
+
+function excerpt_to_description(){
+    global $post;
+    if(is_single() || is_post()){
+        $all_post_content = wp_get_single_post($post->ID);
+        $excerpt = substr($all_post_content->post_content,0,100).' [...]';
+        echo "<meta name='description' content='".$excerpt."'/>\r\n";
+    }else{
+        echo "<meta name='description' content='".get_bloginfo('description')."'/>\r\n";
+    }
+}
+
+add_action('wp_head','excerpt_to_description');
