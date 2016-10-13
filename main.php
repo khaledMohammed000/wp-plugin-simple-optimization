@@ -69,3 +69,24 @@ function excerpt_to_description(){
 }
 
 add_action('wp_head','excerpt_to_description');
+
+//adding code to optimize database queries
+function optimize_database(){
+    global $wpdb;
+    $all_tables=$wpdb->get_results('SHOW TABLES',ARRAY_A);
+    foreach ($all_tables as $tables){
+        $table = array_values($tables);
+        $wpdb->query("OPTIMIZE TABLE".$table[0]);
+    }
+}
+
+function optimization_cron_on(){
+	wp_schedule_event(time(),'daily','optimize_database');
+}
+
+function optimization_cron_off(){
+	wp_clear_scheduled_hook('optimize_database');
+}
+
+register_activation_hook(__FILE__,'optimization_cron_on');
+register_deactivation_hook(__FILE__,'optimization_cron_off');
